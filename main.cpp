@@ -12,10 +12,13 @@ using std::unordered_set;
 using std::vector;
 using std::string;
 using std::ifstream;
-using std::binary_search;
+using std::find;
+using std::sort;
+using std::random_shuffle;
 
 void getAllWords(vector<string> &allWords, const string &PATH);
-void executeCommand(const string &command, const vector<string> &allWords, unordered_set<string> &usedWords);
+void executeCommand(const string &command, vector<string> &allWords, unordered_set<string> &usedWords);
+bool compareLen(string str1, string str2);
 
 int main()
 {
@@ -43,17 +46,26 @@ void getAllWords(vector<string> &allWords, const string &PATH)
     {
         allWords.push_back(word);
     }
+    
 }
 
-void executeCommand(const string &command, const vector<string> &allWords, unordered_set<string> &usedWords)
+void executeCommand(const string &command, vector<string> &allWords, unordered_set<string> &usedWords)
 {
     if(command == "clear")
         usedWords.clear();
+    else if(command == "rand")
+    {
+        random_shuffle(allWords.begin(), allWords.end());
+    }
+    else if(command == "len")
+    {
+        sort(allWords.begin(), allWords.end(), compareLen);
+    }
     else if(command == "quit")
         return;
     else
     {
-        if(binary_search(allWords.cbegin(), allWords.cend(), command) && usedWords.find(command) == usedWords.end())
+        if(find(allWords.cbegin(), allWords.cend(), command) == allWords.cend() && usedWords.find(command) == usedWords.end())
         {
             usedWords.insert(command);
             cout << command << endl;
@@ -70,4 +82,9 @@ void executeCommand(const string &command, const vector<string> &allWords, unord
         }
         cout << "No words found" << endl;
     }
+}
+
+bool compareLen(string str1, string str2)
+{
+    return str1.size() < str2.size();
 }
